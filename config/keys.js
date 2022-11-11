@@ -1,6 +1,6 @@
 module.exports = {
   
-  mongoURI: 'mongodb+srv://1score:Co679mp007@cluster0.ghdza.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+  mongoURI: 'mongodb+srv://decisionfoundry:Co679mp2022@cluster0.zbf8s4s.mongodb.net/?retryWrites=true&w=majority',
   secretOrKey: 'secret'
   
 

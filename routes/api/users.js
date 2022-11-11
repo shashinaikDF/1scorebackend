@@ -310,7 +310,7 @@ router.post('/reset_password/', (req, res) => {
 
             console.log(token);
 
-            console.log(payload.name);
+            console.log(payload.fullname);
 
 
 
@@ -342,7 +342,7 @@ router.post('/reset_password/', (req, res) => {
                 subject: 'Please reset your password',
                 text:
                 `
-                 Hello,
+                 Hello ${payload.fullname},
 
                  Please reset your password by clicking the link below
 

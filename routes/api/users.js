@@ -150,7 +150,7 @@ router.get("/:id", (req, res) => {
     .then((user) => {
       if (!user) {
         errors.noprofile = "There is no profile for this user";
-        res.status(404).json(errors);
+        res.status(404).json(errors);rrrrrrr
       }
 
       res.json(user);
@@ -268,12 +268,12 @@ router.delete(
 // @desc    Submit User email / Returning JWT Token
 // @access  Public
 router.post('/reset_password/', (req, res) => {
-  const { errors, isValid } = validateResetPasswordInput(req.body);
+  // const { errors, isValid } = validateResetPasswordInput(req.body);
 
-  // Check Validation
-  if (!isValid) {
-    return res.status(400).json(errors);
-  }
+  // // Check Validation
+  // if (!isValid) {
+  //   return res.status(400).json(errors);
+  // }
 
   const email = req.body.email;
 
@@ -282,10 +282,10 @@ router.post('/reset_password/', (req, res) => {
   // Find user by email
   User.findOne({ email }).then(user => {
     // Check for user
-    if (!user) {
-      errors.email = 'User not found';
-      return res.status(404).json(errors);
-    }
+    // if (!user) {
+    //   //errors.email = 'User not found';
+    //   return res.status(404).json();
+    // }
 
         // User Matched
         const payload = {

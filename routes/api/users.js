@@ -267,8 +267,8 @@ router.post("/reset_password_test/", (req, res) => {
     secure: false, // true for 465, false for other ports
 
     auth: {
-      user: "info@1score.io",
-      pass: "Ih@te+he$ong444",
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
     },
     tls: {
       ciphers: "SSLv3",
@@ -276,8 +276,8 @@ router.post("/reset_password_test/", (req, res) => {
   });
 
   var mailOptions = {
-    from: "info@1score.io",
-    to: `${payload.email}`,
+    from: process.env.SMTP_USER,
+    to: `shashikant.n@decisionfoundry.com`,
     subject: "Please reset your password",
     text: `
        Hello 
@@ -363,8 +363,8 @@ router.post("/reset_password/", (req, res) => {
           secure: false, // true for 465, false for other ports
 
           auth: {
-            user: "info@1score.io",
-            pass: "Ih@te+he$ong444",
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD,
           },
           tls: {
             ciphers: "SSLv3",
@@ -372,7 +372,7 @@ router.post("/reset_password/", (req, res) => {
         });
 
         var mailOptions = {
-          from: "info@1score.io",
+          from: process.env.SMTP_USER,
           to: `${payload.email}`,
           subject: "Please reset your password",
           text: `

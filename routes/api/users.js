@@ -150,7 +150,8 @@ router.get("/:id", (req, res) => {
     .then((user) => {
       if (!user) {
         errors.noprofile = "There is no profile for this user";
-        res.status(404).json(errors);rrrrrrr
+        res.status(404).json(errors);
+        rrrrrrr;
       }
 
       res.json(user);
@@ -159,8 +160,6 @@ router.get("/:id", (req, res) => {
       res.status(404).json({ profile: "There is no profile for this user" })
     );
 });
-
-
 
 router.get("/email/:email", (req, res) => {
   const errors = {};
@@ -179,7 +178,6 @@ router.get("/email/:email", (req, res) => {
       res.status(404).json({ profile: "There is no profile for this user" })
     );
 });
-
 
 // @route   GET api/users/edit/:id
 // @desc    Edit user by id
@@ -205,7 +203,7 @@ router.put(
     if (req.body.email) profileFields.email = req.body.email;
 
     if (req.body.company) profileFields.city = req.body.company;
-    
+
     // res.send(profileFields.hobbies);
     // res.send(req.body.handle);
 
@@ -235,8 +233,6 @@ router.put(
   }
 );
 
-
-
 // @route   GET api/users/
 // @desc    Return all users
 // @access  Private
@@ -264,10 +260,61 @@ router.delete(
   }
 );
 
+router.post("/reset_password_test/", (req, res) => {
+  var transporter = nodemailer.createTransport({
+    host: "smtp.office365.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+
+    auth: {
+      user: "info@1score.io",
+      pass: "Ih@te+he$ong444",
+    },
+    tls: {
+      ciphers: "SSLv3",
+    },
+  });
+
+  var mailOptions = {
+    from: "info@1score.io",
+    to: `${payload.email}`,
+    subject: "Please reset your password",
+    text: `
+       Hello 
+
+       Please reset your password by clicking the link below
+
+
+       https://demo.1score.io/new_password/token/
+
+       
+
+       Warm Regards,
+       1Score Team
+      `,
+  };
+
+  transporter.verify((err, success) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log("Your config is correct", success);
+    }
+  });
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+});
+
 // @route   GET api/users/reset_password/
 // @desc    Submit User email / Returning JWT Token
 // @access  Public
-router.post('/reset_password/', (req, res) => {
+router.post("/reset_password/", (req, res) => {
   // const { errors, isValid } = validateResetPasswordInput(req.body);
 
   // // Check Validation
@@ -277,71 +324,58 @@ router.post('/reset_password/', (req, res) => {
 
   const email = req.body.email;
 
-
-
   // Find user by email
-  User.findOne({ email }).then(user => {
+  User.findOne({ email }).then((user) => {
     // Check for user
     // if (!user) {
     //   //errors.email = 'User not found';
     //   return res.status(404).json();
     // }
 
-        // User Matched
-        const payload = {
-          id: user.id,
-          fullname: user.fullname,
-          email: user.email,
-          company: user.company,
-          status: user.status,
-        }; 
-        // Create JWT Payload // Create JWT Payload
+    // User Matched
+    const payload = {
+      id: user.id,
+      fullname: user.fullname,
+      email: user.email,
+      company: user.company,
+      status: user.status,
+    };
+    // Create JWT Payload // Create JWT Payload
 
-        // Sign Token
-        jwt.sign(
-          payload,
-          keys.secretOrKey,
-          //{ expiresIn: 604800 },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: token
-            });
+    // Sign Token
+    jwt.sign(
+      payload,
+      keys.secretOrKey,
+      //{ expiresIn: 604800 },
+      (err, token) => {
+        res.json({
+          success: true,
+          token: token,
+        });
 
-            console.log(token);
+        console.log(token);
 
-            console.log(payload.fullname);
+        console.log(payload.fullname);
 
+        var transporter = nodemailer.createTransport({
+          host: "smtp.office365.com",
+          port: 587,
+          secure: false, // true for 465, false for other ports
 
+          auth: {
+            user: "info@1score.io",
+            pass: "Ih@te+he$ong444",
+          },
+          tls: {
+            ciphers: "SSLv3",
+          },
+        });
 
-
-
-
-            var transporter = nodemailer.createTransport({
-              host: 'smtp.office365.com',
-              port: 587,
-              secure: false, // true for 465, false for other ports
-                 
-      
-              auth: {
-                user: 'info@1score.io',
-                pass: 'Ih@te+he$ong444'
-              },
-              tls: {
-                ciphers: 'SSLv3'
-            }
-      
-            });
-      
-
-
-
-              var mailOptions = {
-                from: 'info@1score.io',
-                to: `${payload.email}`,
-                subject: 'Please reset your password',
-                text:
-                `
+        var mailOptions = {
+          from: "info@1score.io",
+          to: `${payload.email}`,
+          subject: "Please reset your password",
+          text: `
                  Hello ${payload.fullname},
 
                  Please reset your password by clicking the link below
@@ -353,83 +387,60 @@ router.post('/reset_password/', (req, res) => {
 
                  Warm Regards,
                  1Score Team
-                `
-              };
+                `,
+        };
 
-
-              transporter.verify((err, success) => {
-                if (err) { 
-                  console.error(err); } else {
-                    console.log('Your config is correct',success);
-                  }
-                
-            });
-
-
-              transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log('Email sent: ' + info.response);
-                }
-              });
+        transporter.verify((err, success) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log("Your config is correct", success);
           }
-        );
+        });
 
-
-
-
-
-    });
-
-
-
-
-
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
+      }
+    );
+  });
 });
 
 // @route   GET api/users/new_password/
 // @desc    Submit User email / Returning JWT Token
 // @access  Public
-router.get('/new_password/token/:token', (req, res) => {
-
-
+router.get("/new_password/token/:token", (req, res) => {
   var decoded = jwt.decode(req.params.token);
 
+  console.log(decoded.id); // bar
 
-   console.log(decoded.id) // bar
+  User.findById(decoded.id)
+    .populate("user", ["fullname", "email"])
+    .then((user) => {
+      if (!user) {
+        errors.noprofile = "There is no profile for this user";
+        res.status(404).json(errors);
+      }
 
-   User.findById(decoded.id)
-     .populate('user', ['fullname', 'email'])
-     .then(user => {
-       if (!user) {
-         errors.noprofile = 'There is no profile for this user';
-         res.status(404).json(errors);
-       }
-
-       res.json(user);
-       console.log(user);
-     })
-     .catch(err =>
-       res.status(404).json({ profile: 'There is no profile for this user' })
-     );
-
-
-
+      res.json(user);
+      console.log(user);
+    })
+    .catch((err) =>
+      res.status(404).json({ profile: "There is no profile for this user" })
+    );
 });
 
 // @route   GET api/users/edit/:id
 // @desc    Edit user by id
 // @access  Public
 router.post(
-  '/update_password/',
+  "/update_password/",
 
   (req, res) => {
-
-
-
-
-
     // Get fields
     const profileFields = {};
     if (req.body.id) profileFields.id = req.body.id;
@@ -437,66 +448,34 @@ router.post(
     // if (req.body.name) profileFields.name = req.body.name;
     // if (req.body.email) profileFields.email = req.body.email;
 
-
-
-
-
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(req.body.password, salt, (err, hash) => {
-           
-           profileFields.password = hash;
-           console.log(`New Password:${JSON.stringify(profileFields)}`);
-           console.log(`New Password 1:${profileFields.password}`);
+        profileFields.password = hash;
+        console.log(`New Password:${JSON.stringify(profileFields)}`);
+        console.log(`New Password 1:${profileFields.password}`);
 
-           User.findById(profileFields.id).then(user => {
-            if (user) {
-      
-      
-              console.log(user);
-      
-      
-      
-      
-      
-                  // Update
-                  User.findOneAndUpdate(
-                    { _id: profileFields.id },
-                    { $set: profileFields },
-                    { new: true }
-                  ).then(user => res.json(user));
-      
-      
-      
-              console.log(`Password Updated ${profileFields.password}`);
-      
-      
-      
-            } else {
-              // Create
-              res.send("No user found");
-      
-            }
-          });
+        User.findById(profileFields.id).then((user) => {
+          if (user) {
+            console.log(user);
+
+            // Update
+            User.findOneAndUpdate(
+              { _id: profileFields.id },
+              { $set: profileFields },
+              { new: true }
+            ).then((user) => res.json(user));
+
+            console.log(`Password Updated ${profileFields.password}`);
+          } else {
+            // Create
+            res.send("No user found");
+          }
+        });
       });
     });
 
-
-
-
-
-
-
-
-
     // res.send(profileFields.hobbies);
     // res.send(req.body.handle);
-
-
-
-
-    
-
-
   }
 );
 
@@ -504,10 +483,9 @@ router.post(
 // @desc    Change Password
 // @access  Private
 router.put(
-  '/changepassword',
-  passport.authenticate('jwt', { session: false }),
+  "/changepassword",
+  passport.authenticate("jwt", { session: false }),
   (req, res) => {
-
     console.log("Hello User");
 
     //const { errors, isValid } = validateUserInput(req.body);
@@ -524,39 +502,27 @@ router.put(
 
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(req.body.password, salt, (err, hash) => {
-           if (req.body.password) profileFields.password = req.body.password;
-           profileFields.password = hash;
+        if (req.body.password) profileFields.password = req.body.password;
+        profileFields.password = hash;
       });
     });
 
-
-
-
-
-
-
     console.log(profileFields);
 
-
-    User.findById(req.body.id).then(user => {
+    User.findById(req.body.id).then((user) => {
       if (user) {
-
-
         User.findOneAndUpdate(
           { _id: req.user.id },
           { $set: profileFields },
           { new: true }
-        ).then(user => res.json(user));
+        ).then((user) => res.json(user));
 
         console.log("password changed");
       } else {
         // Create
         res.send("No user found");
-
       }
     });
-
-
   }
 );
 

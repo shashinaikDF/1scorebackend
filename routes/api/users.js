@@ -261,14 +261,18 @@ router.delete(
 );
 
 router.post("/reset_password_test/", (req, res) => {
+console.log(process.env.SMTP_USER)
+console.log(process.env.SMTP_PASSWORD)
+
   var transporter = nodemailer.createTransport({
     host: "smtp.office365.com",
     port: 587,
-    secure: false, // true for 465, false for other ports
+    secureConnection: false, // true for 465, false for other ports
 
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
+      
     },
     tls: {
       ciphers: "SSLv3",
@@ -309,6 +313,8 @@ router.post("/reset_password_test/", (req, res) => {
       console.log("Email sent: " + info.response);
     }
   });
+
+  return res.json({ msg: "Email sent" })
 });
 
 // @route   GET api/users/reset_password/

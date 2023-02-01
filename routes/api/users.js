@@ -306,13 +306,16 @@ console.log(process.env.SMTP_PASSWORD)
     }
   });
 
+  new Promise((resolve, reject) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
+      reject(error);
     } else {
+      resolve("Email sent: " + info.response);
       console.log("Email sent: " + info.response);
     }
   });
+})
 
   return res.json({ msg: "Email sent" })
 });
@@ -404,13 +407,16 @@ router.post("/reset_password/", (req, res) => {
           }
         });
 
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log("Email sent: " + info.response);
-          }
-        });
+        new Promise((resolve, reject) => {
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve("Email sent: " + info.response);
+              console.log("Email sent: " + info.response);
+            }
+          });
+        })
       }
     );
   });
